@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabaseClient";
 import { useVisits } from "../hooks/useVisits";
 import Navbar from "../components/Navbar";
 import VisitCard from "../components/VisitCard";
-import { ArrowLeft, Plus, Loader2, Pencil, Check, X } from "lucide-react";
+import { ArrowLeft, Plus, Loader2, Pencil, Check, X, Trash2 } from "lucide-react";
 import type { Patient } from "../types/database";
 
 export default function PatientDetail() {
@@ -14,7 +14,7 @@ export default function PatientDetail() {
     visits,
     loading: visitsLoading,
     error: visitsError,
-    refetch: _refetch,
+    refetch: refetchVisits,
   } = useVisits(id);
 
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -27,6 +27,7 @@ export default function PatientDetail() {
   const [editAddress, setEditAddress] = useState("");
   const [saving, setSaving] = useState(false);
   const [addingVisit, setAddingVisit] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchPatient() {
@@ -101,6 +102,52 @@ export default function PatientDetail() {
     }
 
     navigate(`/patients/${id}/visits/${visit.id}`);
+  }
+
+  async function handleDeletePatient() {
+    if (!id) return;
+    if (!window.confirm("Delete this patient and all their visits?")) return;
+    setDeleting(true);
+
+    const { error: visitsErr } = await supabase
+      .from("visits")
+      .delete()
+      .eq("patient_id", id);
+
+    if (visitsErr) {
+      setError(visitsErr.message);
+      setDeleting(false);
+      return;
+    }
+
+    const { error: patientErr } = await supabase
+      .from("patients")
+      .delete()
+      .eq("id", id);
+
+    if (patientErr) {
+      setError(patientErr.message);
+      setDeleting(false);
+      return;
+    }
+
+    navigate("/");
+  }
+
+  async function handleDeleteVisit(visitId: string) {
+    if (!window.confirm("Delete this visit?")) return;
+
+    const { error } = await supabase
+      .from("visits")
+      .delete()
+      .eq("id", visitId);
+
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+    refetchVisits();
   }
 
   if (loading) {
@@ -236,13 +283,27 @@ export default function PatientDetail() {
                     </p>
                   )}
                 </div>
-                <button
-                  onClick={() => setEditing(true)}
-                  className="min-h-[44px] min-w-[44px] flex items-center justify-center text-text-muted hover:text-primary cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-lg"
-                  aria-label="Edit patient"
-                >
-                  <Pencil className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setEditing(true)}
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center text-text-muted hover:text-primary cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-lg"
+                    aria-label="Edit patient"
+                  >
+                    <Pencil className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={handleDeletePatient}
+                    disabled={deleting}
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center text-text-muted hover:text-danger cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-danger/20 rounded-lg disabled:opacity-60"
+                    aria-label="Delete patient"
+                  >
+                    {deleting ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -287,7 +348,12 @@ export default function PatientDetail() {
           ) : (
             <div className="space-y-2">
               {visits.map((visit) => (
-                <VisitCard key={visit.id} visit={visit} patientId={id!} />
+                <VisitCard
+                  key={visit.id}
+                  visit={visit}
+                  patientId={id!}
+                  onDelete={() => handleDeleteVisit(visit.id)}
+                />
               ))}
             </div>
           )}
