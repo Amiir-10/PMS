@@ -172,6 +172,7 @@ function AddPatientModal({
               id="patient-name"
               type="text"
               required
+              maxLength={100}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
@@ -210,6 +211,7 @@ function AddPatientModal({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               rows={2}
+              maxLength={300}
               className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors resize-none"
               placeholder="Patient address"
             />
