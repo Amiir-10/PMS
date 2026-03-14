@@ -1,13 +1,18 @@
 import { Link } from "react-router-dom";
-import { ChevronRight, CalendarDays } from "lucide-react";
+import { ChevronRight, CalendarDays, Trash2 } from "lucide-react";
 import type { Visit } from "../types/database";
 
 interface VisitCardProps {
   visit: Visit;
   patientId: string;
+  onDelete?: () => void;
 }
 
-export default function VisitCard({ visit, patientId }: VisitCardProps) {
+export default function VisitCard({
+  visit,
+  patientId,
+  onDelete,
+}: VisitCardProps) {
   return (
     <Link
       to={`/patients/${patientId}/visits/${visit.id}`}
@@ -28,6 +33,19 @@ export default function VisitCard({ visit, patientId }: VisitCardProps) {
             </p>
           )}
         </div>
+        {onDelete && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center text-text-muted hover:text-danger cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-danger/20 rounded-lg shrink-0"
+            aria-label={`Delete visit #${visit.visit_number}`}
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        )}
         <ChevronRight className="w-5 h-5 text-text-muted/40 shrink-0" />
       </div>
     </Link>
