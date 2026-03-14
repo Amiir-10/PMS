@@ -1,6 +1,7 @@
 export interface Patient {
   id: string;
   created_at: string;
+  user_id: string;
   name: string;
   age: number | null;
   address: string | null;
