@@ -4,7 +4,15 @@ import { supabase } from "../lib/supabaseClient";
 import { useVisits } from "../hooks/useVisits";
 import Navbar from "../components/Navbar";
 import VisitCard from "../components/VisitCard";
-import { ArrowLeft, Plus, Loader2, Pencil, Check, X, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Loader2,
+  Pencil,
+  Check,
+  X,
+  Trash2,
+} from "lucide-react";
 import type { Patient } from "../types/database";
 
 export default function PatientDetail() {
@@ -109,24 +117,10 @@ export default function PatientDetail() {
     if (!window.confirm("Delete this patient and all their visits?")) return;
     setDeleting(true);
 
-    const { error: visitsErr } = await supabase
-      .from("visits")
-      .delete()
-      .eq("patient_id", id);
+    const { error } = await supabase.from("patients").delete().eq("id", id);
 
-    if (visitsErr) {
-      setError(visitsErr.message);
-      setDeleting(false);
-      return;
-    }
-
-    const { error: patientErr } = await supabase
-      .from("patients")
-      .delete()
-      .eq("id", id);
-
-    if (patientErr) {
-      setError(patientErr.message);
+    if (error) {
+      setError(error.message);
       setDeleting(false);
       return;
     }
@@ -137,10 +131,7 @@ export default function PatientDetail() {
   async function handleDeleteVisit(visitId: string) {
     if (!window.confirm("Delete this visit?")) return;
 
-    const { error } = await supabase
-      .from("visits")
-      .delete()
-      .eq("id", visitId);
+    const { error } = await supabase.from("visits").delete().eq("id", visitId);
 
     if (error) {
       setError(error.message);
