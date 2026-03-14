@@ -39,9 +39,14 @@ export default function VisitSheet({
 
   async function handleSave() {
     setSaving(true);
-    await onSave(formData);
-    setSaving(false);
-    setIsEditing(false);
+    try {
+      await onSave(formData);
+      setIsEditing(false);
+    } catch {
+      // error handled by parent
+    } finally {
+      setSaving(false);
+    }
   }
 
   function handleCancel() {
@@ -116,6 +121,7 @@ export default function VisitSheet({
               {isEditing ? (
                 <input
                   type="text"
+                  maxLength={50}
                   value={(formData[key] as string) ?? ""}
                   onChange={(e) => updateField(key, e.target.value)}
                   className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
@@ -137,6 +143,7 @@ export default function VisitSheet({
                 value={(formData[key] as string) ?? ""}
                 onChange={(e) => updateField(key, e.target.value)}
                 rows={3}
+                maxLength={2000}
                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors resize-y min-h-[80px]"
               />
             ) : (
