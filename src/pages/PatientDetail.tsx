@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { useVisits } from "../hooks/useVisits";
@@ -14,7 +14,7 @@ export default function PatientDetail() {
     visits,
     loading: visitsLoading,
     error: visitsError,
-    refetch,
+    refetch: _refetch,
   } = useVisits(id);
 
   const [patient, setPatient] = useState<Patient | null>(null);
