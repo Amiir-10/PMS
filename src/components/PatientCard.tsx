@@ -19,6 +19,7 @@ export default function PatientCard({ patient }: PatientCardProps) {
           <h3 className="font-semibold text-text truncate">{patient.name}</h3>
           <div className="flex items-center gap-3 mt-1 text-sm text-text-muted">
             {patient.age != null && <span>Age {patient.age}</span>}
+            <span>{patient.referred_from}</span>
             <span>
               {visitCount} {visitCount === 1 ? "visit" : "visits"}
             </span>

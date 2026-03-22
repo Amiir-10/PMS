@@ -5,6 +5,7 @@ export interface Patient {
   name: string;
   age: number | null;
   address: string | null;
+  referred_from: string;
 }
 
 export interface Visit {

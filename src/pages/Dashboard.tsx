@@ -90,6 +90,7 @@ function AddPatientModal({
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [address, setAddress] = useState("");
+  const [referredFrom, setReferredFrom] = useState("Clinic");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,6 +105,7 @@ function AddPatientModal({
         name,
         age: age ? parseInt(age, 10) : null,
         address: address || null,
+        referred_from: referredFrom,
       })
       .select()
       .single();
@@ -215,6 +217,26 @@ function AddPatientModal({
               className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors resize-none"
               placeholder="Patient address"
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="patient-referred-from"
+              className="block text-sm font-medium text-text mb-1"
+            >
+              Referred From
+            </label>
+            <select
+              id="patient-referred-from"
+              value={referredFrom}
+              onChange={(e) => setReferredFrom(e.target.value)}
+              className="w-full min-h-[44px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors cursor-pointer"
+            >
+              <option value="Clinic">Clinic</option>
+              <option value="Vezeeta">Vezeeta</option>
+              <option value="El Razy">El Razy</option>
+              <option value="Otlob Tabeeb">Otlob Tabeeb</option>
+            </select>
           </div>
 
           <button
