@@ -25,6 +25,7 @@ export default function PatientDetail() {
   const [editName, setEditName] = useState("");
   const [editAge, setEditAge] = useState("");
   const [editAddress, setEditAddress] = useState("");
+  const [editReferredFrom, setEditReferredFrom] = useState("Clinic");
   const [saving, setSaving] = useState(false);
   const [addingVisit, setAddingVisit] = useState(false);
 
@@ -44,6 +45,7 @@ export default function PatientDetail() {
         setEditName(data.name);
         setEditAge(data.age?.toString() ?? "");
         setEditAddress(data.address ?? "");
+        setEditReferredFrom(data.referred_from ?? "Clinic");
       }
       setLoading(false);
     }
@@ -61,6 +63,7 @@ export default function PatientDetail() {
         name: editName,
         age: editAge ? parseInt(editAge, 10) : null,
         address: editAddress || null,
+        referred_from: editReferredFrom,
       })
       .eq("id", id)
       .select()
@@ -80,6 +83,7 @@ export default function PatientDetail() {
     setEditName(patient.name);
     setEditAge(patient.age?.toString() ?? "");
     setEditAddress(patient.address ?? "");
+    setEditReferredFrom(patient.referred_from ?? "Clinic");
     setEditing(false);
   }
 
@@ -197,6 +201,25 @@ export default function PatientDetail() {
                   className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors resize-none"
                 />
               </div>
+              <div>
+                <label
+                  htmlFor="edit-referred-from"
+                  className="block text-sm font-medium text-text mb-1"
+                >
+                  Referred From
+                </label>
+                <select
+                  id="edit-referred-from"
+                  value={editReferredFrom}
+                  onChange={(e) => setEditReferredFrom(e.target.value)}
+                  className="w-full min-h-[44px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors cursor-pointer"
+                >
+                  <option value="Clinic">Clinic</option>
+                  <option value="Vezeeta">Vezeeta</option>
+                  <option value="El Razy">El Razy</option>
+                  <option value="Otlob Tabeeb">Otlob Tabeeb</option>
+                </select>
+              </div>
               <div className="flex gap-2">
                 <button
                   type="submit"
@@ -229,6 +252,7 @@ export default function PatientDetail() {
                   </h2>
                   <div className="flex items-center gap-3 mt-1 text-sm text-text-muted">
                     {patient.age != null && <span>Age {patient.age}</span>}
+                    <span>{patient.referred_from}</span>
                   </div>
                   {patient.address && (
                     <p className="text-sm text-text-muted mt-2">
